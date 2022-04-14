@@ -7,8 +7,7 @@ function usage() {
 Usage: ./$0 [Option]
 
 Option:
-  -u,--ultisnip     format for UltiSnip.
-  -n,--neosippet    (default) format for NeoSnippet.
+  -n,--neosippet    format for NeoSnippet (defaults for UltiSnip).
   -h,--help         display this message.
 EOF
 }
@@ -17,12 +16,10 @@ EOF
 # - neosnippet
 # - Ultisnip
 target="${1:-n}"
+endsnippet_str="endsnippet"
 case "${target#-}" in
     n|-neosnippet)
         endsnippet_str=""
-        ;;
-    u|-ultisnip)
-        endsnippet_str="endsnippet"
         ;;
     h|--help)
         usage
@@ -41,16 +38,17 @@ aws_cfn_doc_repo="${home}/aws-cloudformation-user-guide"
 aws_cfn_doc_dir="${aws_cfn_doc_repo}/doc_source"
 
 # update submodule(aws-cloudformation-user-guide)
-git submodule foreach git pull origin master
+git submodule foreach git pull origin main
 mkdir -p "${home}/snippets/"
-rm -vrf "${home}"/snippets/*
+rm -vf "${home}/snippets/yaml_cloudformation.snippets"
 
 
 # main
 cd "${aws_cfn_doc_dir}"
-for file_type in yaml json
+for file_type in yaml
 do
-  snip="${home}/snippets/${file_type}.snip"
+  echo generating: $file_type
+  snip="${home}/snippets/${file_type}.snippets"
   # AWS Resource snippets
   echo "### AWS Resource snippets" >> "${snip}"
   for FILE in $(grep "^### ${file_type^^}" aws-resource* | awk -F: '{ print $1 }' | sort -u)
@@ -91,7 +89,8 @@ do
   done
 done
 
-cat >> "${home}/snippets/yaml.snip" <<-EOS
+
+cat >> "${home}/snippets/yaml.snippets" <<-EOS
 	snippet AWSTemplateFormatVersion
 	  AWSTemplateFormatVersion: "2010-09-09"
 	  Description: A sample template
@@ -102,3 +101,6 @@ cat >> "${home}/snippets/yaml.snip" <<-EOS
 	${endsnippet_str}
 
 EOS
+
+
+mv -vf "${home}/snippets/yaml.snippets" "${home}/snippets/yaml_cloudformation.snippets"

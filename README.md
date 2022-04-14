@@ -1,30 +1,26 @@
 # aws-cfn-snippet.vim
 
-## Make yaml and json snippet file for AWS CloudFormation.
+## Installation
 
-you need [Shougo/neosnippet](https://github.com/Shougo/neosnippet.vim) Plugin.
-check your snippet directory in vimrc.
-
-```bash:vimrc
-let g:neosnippet#snippets_directory='~/.vim/snippets/'
+```
+Plug 'speshak/vim-cfn'
+Plug 'ppalucki/aws-cfn-snippet.vim'
 ```
 
-Add snip files(`yaml.snip, json.snip`) in your snippet file or directory.
+## Update 2022
 
-```bash
-cat yaml.snip >> ~/.vim/snippet/yaml.snip
-cat json.snip >> ~/.vim/snippet/json.snip
+Fork description:
+
+- generated with ultisnips format (-u)
+- recommended to use with speshak/vim-cfn (changed format to yaml_cloudformation.snippets)
+    (for ftdetection)
+- manually added some initall snippets from original repo (like init,start)
+
+
+## Regeneration
+
 ```
-
-## Sample
-
-![Sample1](./images/sample1.png)
-![Sample2](./images/sample2.png)
-
-## Trouble shooting
-
-Q. display `^### ${filetype^^}: bad substatution`  
-A. This regexp require bash 4.x later. So update your bash version.
-
-Q. display `sed: RE error: illegal byte sequence`  
-A. execute `export LC_ALL=C`  
+git submodule init
+git submodule update
+./make-cfn-snippet.sh
+```
