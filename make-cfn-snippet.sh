@@ -7,7 +7,8 @@ function usage() {
 Usage: ./$0 [Option]
 
 Option:
-  -n,--neosippet    format for NeoSnippet (defaults for UltiSnip).
+  -u,--ultisnip     (default) format for UltiSnip
+  -n,--neosippet    format for NeoSnippet 
   -h,--help         display this message.
 EOF
 }
@@ -15,9 +16,11 @@ EOF
 # option for below snippet plugins
 # - neosnippet
 # - Ultisnip
-target="${1:-n}"
-endsnippet_str="endsnippet"
+target="${1:-u}"
 case "${target#-}" in
+    u|-ultisnip)
+        endsnippet_str="endsnippet"
+        ;;
     n|-neosnippet)
         endsnippet_str=""
         ;;
@@ -31,6 +34,7 @@ case "${target#-}" in
         ;;
 esac
 
+echo "Format: $endsnippet_str"
 
 # initialize variables
 home=$(cd $(dirname $0); pwd)
@@ -40,7 +44,7 @@ aws_cfn_doc_dir="${aws_cfn_doc_repo}/doc_source"
 # update submodule(aws-cloudformation-user-guide)
 git submodule foreach git pull origin main
 mkdir -p "${home}/snippets/"
-rm -vf "${home}/snippets/yaml_cloudformation.snippets"
+rm -vrf "${home}"/snippets/*
 
 
 # main
@@ -89,6 +93,7 @@ do
   done
 done
 
+mv -vf "${home}/snippets/yaml.snippets" "${home}/snippets/yaml_cloudformation.snippets"
 
 cat >> "${home}/snippets/yaml.snippets" <<-EOS
 	snippet AWSTemplateFormatVersion
@@ -103,4 +108,3 @@ cat >> "${home}/snippets/yaml.snippets" <<-EOS
 EOS
 
 
-mv -vf "${home}/snippets/yaml.snippets" "${home}/snippets/yaml_cloudformation.snippets"
